@@ -1,10 +1,17 @@
 <script>
   export let index = 0
   export let score = 0
+
+  let hole
+
+  function handleClick() {
+    score++
+    hole.classList.remove('up')
+  }
 </script>
 
-<div class="hole hole{index}">
-  <div class="mole" on:click={() => score++} />
+<div bind:this={hole} class="hole hole{index}">
+  <div class="mole" on:click={handleClick} />
 </div>
 
 <style>
