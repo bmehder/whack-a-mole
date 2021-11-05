@@ -1,13 +1,14 @@
 <script>
-  import { onMount } from 'svelte'
   import Hole from './Hole.svelte'
 
-  let holes, moles, scoreBoard
+  let holesEl, holes
 
   let lastHole
   let timeUp = false
   let score = 0
-  const numberOfHoles = 6
+  let numberOfHoles = 6
+
+  $: holes = holesEl?.children
 
   const randomTime = (min, max) => Math.round(Math.random() * (max - min) + min)
 
@@ -40,17 +41,12 @@
     peep()
     setTimeout(() => (timeUp = true), 10 * 1000)
   }
-
-  onMount(() => {
-    holes = document.querySelectorAll('.hole')
-    moles = document.querySelectorAll('.mole')
-  })
 </script>
 
-<h1>Whack-a-mole! <span bind:this={scoreBoard}>{score}</span></h1>
+<h1>Whack-a-mole! <span>{score}</span></h1>
 <button on:click={startGame}>Start!</button>
 
-<main bind:this={holes}>
+<main bind:this={holesEl}>
   {#each Array(numberOfHoles) as _, index}
     <Hole {index} bind:score />
   {/each}
