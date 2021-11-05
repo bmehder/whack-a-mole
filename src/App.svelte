@@ -6,8 +6,10 @@
   let lastHole
   let timeUp = false
   let score = 0
-  let numberOfHoles = 6
+  let isDisabled = false
+  let value = 6
 
+  $: numberOfHoles = value
   $: holes = holesEl?.children
 
   const randomTime = (min, max) => Math.round(Math.random() * (max - min) + min)
@@ -36,15 +38,22 @@
   }
 
   function startGame() {
+    isDisabled = true
     timeUp = false
     score = 0
     peep()
-    setTimeout(() => (timeUp = true), 10 * 1000)
+    setTimeout(() => {
+      timeUp = true
+      isDisabled = false
+    }, 10 * 1000)
   }
 </script>
 
 <h1>Whack-a-mole! <span>{score}</span></h1>
-<button on:click={startGame}>Start!</button>
+<div>
+  <input type="number" placeholder="No. of moles" bind:value />
+  <button on:click={startGame} disabled={isDisabled}>Start!</button>
+</div>
 
 <main bind:this={holesEl}>
   {#each Array(numberOfHoles) as _, index}
@@ -53,22 +62,10 @@
 </main>
 
 <style>
-  :global(html) {
-    box-sizing: border-box;
-    background: #ffc600;
-    font-size: 10px;
+  div {
+    display: flex;
+    justify-content: center;
   }
-
-  :global(*, *:before, *:after) {
-    box-sizing: inherit;
-  }
-
-  :global(body) {
-    padding: 0;
-    margin: 0;
-    font-family: 'Amatic SC', cursive;
-  }
-
   h1 {
     text-align: center;
     font-size: 10rem;
@@ -76,9 +73,8 @@
     margin-bottom: 0;
   }
 
-  button {
-    display: block;
-    margin: auto;
+  button,
+  input {
     padding: 1rem 1.5rem;
     text-align: center;
     font-size: 2rem;
