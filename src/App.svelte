@@ -1,24 +1,24 @@
 <script>
   import Hole from './Hole.svelte'
 
-  let holesEl, holes
-
+  let holesEl
+  let holes = []
   let lastHole
-  let timeUp = false
+  let numberOfHoles = 6
   let score = 0
+  let isTimeUp = false
   let isDisabled = false
-  let value = 6
 
-  $: numberOfHoles = value
   $: holes = holesEl?.children
 
-  const randomTime = (min, max) => Math.round(Math.random() * (max - min) + min)
+  const getRandomTime = (min, max) =>
+    Math.round(Math.random() * (max - min) + min)
 
-  function randomHole(holes) {
+  function getRandomHole(holes) {
     const idx = Math.floor(Math.random() * holes.length)
     const hole = holes[idx]
 
-    if (hole === lastHole) return randomHole(holes)
+    if (hole === lastHole) return getRandomHole(holes)
 
     lastHole = hole
 
@@ -26,24 +26,24 @@
   }
 
   function peep() {
-    const time = randomTime(200, 1000)
-    const hole = randomHole(holes)
+    const randomTime = getRandomTime(200, 1000)
+    const randomHole = getRandomHole(holes)
 
-    hole.classList.add('up')
+    randomHole.classList.add('up')
 
     setTimeout(() => {
-      hole.classList.remove('up')
-      if (!timeUp) peep()
-    }, time)
+      randomHole.classList.remove('up')
+      if (!isTimeUp) peep()
+    }, randomTime)
   }
 
   function startGame() {
     isDisabled = true
-    timeUp = false
+    isTimeUp = false
     score = 0
     peep()
     setTimeout(() => {
-      timeUp = true
+      isTimeUp = true
       isDisabled = false
     }, 10 * 1000)
   }
@@ -51,13 +51,19 @@
 
 <h1>Whack-a-mole! <span>{score}</span></h1>
 <div>
-  <input type="number" placeholder="No. of moles" bind:value />
+  <input
+    type="number"
+    min="2"
+    max="32"
+    placeholder="No. of moles"
+    bind:value={numberOfHoles}
+  />
   <button on:click={startGame} disabled={isDisabled}>Start!</button>
 </div>
 
 <main bind:this={holesEl}>
-  {#each Array(numberOfHoles) as _, index}
-    <Hole {index} bind:score />
+  {#each Array(numberOfHoles) as _}
+    <Hole bind:score />
   {/each}
 </main>
 

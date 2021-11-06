@@ -1,27 +1,25 @@
 <script>
-  export let index = 0
   export let score = 0
 
-  let hole
-
-  function handleClick() {
-    score++
-    hole.classList.remove('up')
-  }
+  let holeEl
 </script>
 
-<div bind:this={hole} class="hole hole{index}">
-  <div class="mole" on:click={handleClick} />
-</div>
+<article
+  bind:this={holeEl}
+  class={score}
+  on:click={() => holeEl.classList.remove('up')}
+>
+  <div on:click={() => score++} />
+</article>
 
 <style>
-  .hole {
+  article {
     flex: 1 0 33.33%;
     overflow: hidden;
     position: relative;
   }
 
-  .hole:after {
+  article:after {
     display: block;
     background: url('/dirt.svg') bottom center no-repeat;
     background-size: contain;
@@ -33,7 +31,7 @@
     bottom: -30px;
   }
 
-  .mole {
+  div {
     background: url('/mole.svg') bottom center no-repeat;
     background-size: 60%;
     position: absolute;
@@ -43,7 +41,7 @@
     transition: all 0.4s;
   }
 
-  .hole.up .mole {
+  article.up div {
     top: 0;
   }
 </style>
